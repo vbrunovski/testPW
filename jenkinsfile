@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    tools {
+        // Убедитесь, что в Jenkins (Manage Jenkins -> Tools) 
+        // есть инструмент с ТАКИМ ЖЕ именем, например 'NodeJS-18'
+        nodejs 'NodeJS-18' 
+    }
+
+    environment {
+        CI = 'true'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm ci'
+                sh 'npx playwright install --with-deps chromium'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm run test:ci'
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+                    junit 'test-results/junit.xml'
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
