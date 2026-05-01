@@ -1,12 +1,9 @@
 pipeline {
-    agent any
-    
-    tools {
-        nodejs 'NodeJS-18'
-    }
-    
-    environment {
-        CI = 'true'
+    agent {
+        docker {
+            image 'mcr.microsoft.com/playwright:v1.40.0-focal'
+            args '--user root'
+        }
     }
     
     stages {
@@ -19,32 +16,12 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh 'npm ci'
-                sh 'npx playwright install chromium || true'
-            }
-        }
-        
-        stage('Debug - Check Files') {
-            steps {
-                sh '''
-                    echo "=== Current directory ==="
-                    pwd
-                    echo "=== List all files ==="
-                    ls -la
-                    echo "=== Check tests directory ==="
-                    ls -la tests/ || echo "No tests directory"
-                    echo "=== Check for spec files ==="
-                    find . -name "*.spec.js" -type f
-                    echo "=== Check playwright config ==="
-                    cat playwright.config.js | grep testDir
-                '''
             }
         }
         
         stage('Run Tests') {
             steps {
-                sh '''
-                    npx playwright test --reporter=junit,html --debug || true
-                '''
+                sh 'npx playwright test --reporter=junit,html'
             }
             post {
                 always {
