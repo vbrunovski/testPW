@@ -26,6 +26,8 @@ pipeline {
         
         stage('Run Tests') {
             steps {
+                sh 'ls -la tests/'  // ← покажет, есть ли тесты
+                sh 'cat tests/example.spec.js'  // ← покажет содержимое теста
                 sh 'npm run test:ci'
             }
             post {
