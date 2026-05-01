@@ -28,20 +28,26 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh 'npm ci'
-                sh 'npx playwright install chromium || true'
+                sh 'npx playwright install chromium'
             }
         }
         
         stage('Run Tests') {
             steps {
-                sh 'npx playwright test --reporter=junit,html || true'
+                sh '''
+                    mkdir -p test-results
+                    npx playwright test --reporter=junit,html
+                '''
             }
             post {
                 always {
+                    // Архивация отчетов
                     archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
-                     archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
-                    // Измените путь здесь:
-                    junit testResults: '**/junit.xml', allowEmptyResults: true  // ← ищет любой junit.xml
+                    archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+                    archiveArtifacts artifacts: '**/junit.xml', allowEmptyArchive: true
+                    
+                    // Публикация JUnit отчета - ищем в любом месте
+                    junit testResults: '**/junit.xml', allowEmptyResults: true
                 }
             }
         }
