@@ -1,5 +1,9 @@
 pipeline {
     agent any
+
+    tools {
+        nodejs 'NodeJS-18'   // ← это имя должно СОВПАДАТЬ с тем, что вы указали в Global Tool Configuration
+    }
     
     environment {
         CI = 'true'
