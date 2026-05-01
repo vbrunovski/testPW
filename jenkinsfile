@@ -39,8 +39,9 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
-                    archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
-                    junit testResults: 'test-results/junit.xml', allowEmptyResults: true
+                     archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+                    // Измените путь здесь:
+                    junit testResults: '**/junit.xml', allowEmptyResults: true  // ← ищет любой junit.xml
                 }
             }
         }
