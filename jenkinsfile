@@ -1,8 +1,8 @@
 pipeline {
     agent any
-
+    
     tools {
-        nodejs 'NodeJS-18'   // ← это имя должно СОВПАДАТЬ с тем, что вы указали в Global Tool Configuration
+        nodejs 'NodeJS-18'
     }
     
     environment {
@@ -19,7 +19,8 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh 'npm ci'
-                sh 'npx playwright install --with-deps chromium'
+                // Устанавливаем только браузер, без системных зависимостей
+                sh 'npx playwright install chromium'
             }
         }
         
