@@ -19,25 +19,37 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh 'npm ci'
-                // Устанавливаем браузер, игнорируя предупреждения о системных зависимостях
                 sh 'npx playwright install chromium || true'
+            }
+        }
+        
+        stage('Debug - Check Files') {
+            steps {
+                sh '''
+                    echo "=== Current directory ==="
+                    pwd
+                    echo "=== List all files ==="
+                    ls -la
+                    echo "=== Check tests directory ==="
+                    ls -la tests/ || echo "No tests directory"
+                    echo "=== Check for spec files ==="
+                    find . -name "*.spec.js" -type f
+                    echo "=== Check playwright config ==="
+                    cat playwright.config.js | grep testDir
+                '''
             }
         }
         
         stage('Run Tests') {
             steps {
-                // Запускаем тесты, игнорируя ошибки (продолжаем даже если что-то не так)
                 sh '''
-                    npx playwright test --reporter=junit,html || true
+                    npx playwright test --reporter=junit,html --debug || true
                 '''
             }
             post {
                 always {
-                    // Архивация отчетов и результатов
                     archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
                     archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
-                    
-                    // Публикация JUnit отчета
                     junit testResults: 'test-results/junit.xml', allowEmptyResults: true
                 }
             }
@@ -46,7 +58,6 @@ pipeline {
     
     post {
         always {
-            // Очистка рабочей директории
             cleanWs()
         }
     }
