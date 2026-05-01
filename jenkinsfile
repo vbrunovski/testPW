@@ -10,7 +10,7 @@ pipeline {
         CI = 'true'
     }
     
-    stages {ß
+    stages {
         stage('Checkout') {
             steps {
                 checkout scm
