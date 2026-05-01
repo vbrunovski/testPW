@@ -1,10 +1,9 @@
 pipeline {
     agent any
     
-    // УДАЛИТЕ ЭТОТ БЛОК ПОЛНОСТЬЮ:
-    // tools {
-    //     nodejs 'NodeJS-18'
-    // }
+     tools {
+         nodejs 'NodeJS Plugin'
+     }
     
     environment {
         CI = 'true'
