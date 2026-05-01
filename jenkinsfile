@@ -34,36 +34,11 @@ pipeline {
         
         stage('Run Tests') {
             steps {
-                sh '''
-                    # Создаем папку с правильными правами
-                    mkdir -p test-results
-                    chmod 777 test-results
-                    
-                    # Запускаем тесты
-                    npx playwright test --reporter=junit,html
-                    
-                    # Если файл не создался, создаем его вручную
-                    if [ ! -f test-results/junit.xml ]; then
-                        echo "Creating junit.xml manually..."
-                        cat > test-results/junit.xml << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-    <testsuite name="Playwright Tests" tests="0" failures="0" errors="0" skipped="0" time="0">
-    </testsuite>
-</testsuites>
-EOF
-                    fi
-                    
-                    # Показываем содержимое для отладки
-                    echo "=== test-results contents ==="
-                    ls -la test-results/
-                '''
+                sh 'npx playwright test --reporter=html'
             }
             post {
                 always {
                     archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
-                    archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
-                    junit testResults: 'test-results/*.xml', allowEmptyResults: true
                 }
             }
         }
