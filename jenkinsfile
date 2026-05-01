@@ -1,9 +1,12 @@
 pipeline {
-    agent {
-        docker {
-            image 'mcr.microsoft.com/playwright:v1.40.0-focal'
-            args '--user root'
-        }
+    agent any
+    
+    tools {
+        nodejs 'NodeJS-18'
+    }
+    
+    environment {
+        CI = 'true'
     }
     
     stages {
@@ -13,9 +16,20 @@ pipeline {
             }
         }
         
+        stage('Install System Dependencies') {
+            steps {
+                sh '''
+                    # Пытаемся установить зависимости (игнорируем ошибки если нет прав)
+                    apt-get update 2>/dev/null || true
+                    apt-get install -y libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libxshmfence-dev libxrandr2 2>/dev/null || true
+                '''
+            }
+        }
+        
         stage('Install Dependencies') {
             steps {
                 sh 'npm ci'
+                sh 'npx playwright install chromium'
             }
         }
         
