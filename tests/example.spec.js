@@ -1,5 +1,6 @@
 // @ts-check
-import { test, expect } from '@playwright/test';
+//import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
 
 test.only('has title', async ({ page }) => {
   await page.goto('https://playwright.dev/');
