@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    triggers {
+        // Запускать каждые 5 минут (для теста)
+        cron('*/1 * * * *') 
+    }
     
     tools {
         nodejs 'NodeJS-18'
