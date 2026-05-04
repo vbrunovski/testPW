@@ -15,8 +15,8 @@ const { defineConfig, devices } = require('@playwright/test');
  */
 export default defineConfig({
   testDir: './tests',
-  testMatch: '**/*.spec.js',  // ← ДОБАВЬТЕ ЭТУ СТРОКУ явно
-  testIgnore: '**/node_modules/**',  // ← И ЭТУ
+  testMatch: '**/*.spec.js',  // 
+  testIgnore: '**/node_modules/**',  // 
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
